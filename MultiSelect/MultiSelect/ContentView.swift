@@ -13,15 +13,22 @@ struct ContentView: View {
     let buttons = [0:"a", 1:"b", 2:"c", 3:"d", 4:"e", 5:"f"]
 //    let buttons = [0:"a", 1:"b", 2:"c"]
 
+    private var states:Array<Bool> = Array<Bool>()
     init() {
-        // Apply Filters
+        // Initial Filters
+        states.append(true)
+        states.append(true)
+        states.append(true)
+        states.append(false)
+        states.append(true)
+        states.append(true)
     }
     
     var body: some View {
         GeometryReader { geo in
             HStack (spacing: 0) {
                 ForEach(self.buttons.sorted(by: <), id: \.key) { button in
-                    ButtonView(isSelected: true, width: (geo.size.width / CGFloat(self.buttons.count)) * 0.80)
+                    ButtonView(isSelected: self.states[button.key], width: (geo.size.width / CGFloat(self.buttons.count)) * 0.80, element: button)
                 }
             }
         }
@@ -32,17 +39,21 @@ struct ButtonView: View {
     
     @State private var isSelected:Bool
     private let width:CGFloat!
-    init(isSelected: Bool, width: CGFloat) {
+    private let element:Dictionary<Int,String>.Element!
+    
+    init(isSelected: Bool, width: CGFloat, element: Dictionary<Int,String>.Element) {
         self._isSelected = State(wrappedValue: isSelected)
         self.width = width
+        self.element = element
     }
     
     var body: some View {
         Button(action: {
             self.isSelected.toggle()
-            print("Applying Filter, selected = \(self.isSelected)")
+            print("\(self.element.value) isSelected = \(self.isSelected)")
+            print("Save and Apply Filters")
         }) {
-            Text("button.value")
+            Text(element.value)
         }
         .frame(width: self.width, height: 30.0, alignment: .center)
         .border(Color.blue)
